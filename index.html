@@ -3,337 +3,286 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>고백 성공 확률 계산기</title>
+
+<title>인터랙티브 우주 탐험</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
+
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:"Pretendard", sans-serif;
 }
 
 body{
-  min-height:100vh;
-  background:
-  linear-gradient(135deg,#ff0844,#ffb199);
+  overflow-x:hidden;
+  background:black;
+  color:white;
+  font-family:'Orbitron',sans-serif;
+}
+
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:-1;
+}
+
+section{
+  height:100vh;
   display:flex;
+  flex-direction:column;
   justify-content:center;
   align-items:center;
-  overflow:hidden;
+  text-align:center;
   padding:20px;
-}
-
-.bg-hearts{
-  position:fixed;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  z-index:0;
-}
-
-.bg-hearts span{
-  position:absolute;
-  font-size:30px;
-  animation:float 8s linear infinite;
-  opacity:0.4;
-}
-
-@keyframes float{
-  0%{
-    transform:translateY(100vh) rotate(0deg);
-  }
-  100%{
-    transform:translateY(-120vh) rotate(360deg);
-  }
-}
-
-.container{
   position:relative;
-  z-index:1;
-  width:100%;
-  max-width:550px;
-  background:rgba(255,255,255,0.15);
-  backdrop-filter:blur(15px);
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:30px;
-  padding:35px;
-  color:white;
-  box-shadow:0 10px 40px rgba(0,0,0,0.2);
 }
 
 h1{
-  text-align:center;
-  margin-bottom:10px;
-  font-size:35px;
+  font-size:5rem;
+  text-shadow:0 0 20px cyan;
+  margin-bottom:20px;
 }
 
-.sub{
-  text-align:center;
-  margin-bottom:30px;
+h2{
+  font-size:4rem;
+  margin-bottom:20px;
+}
+
+p{
+  max-width:700px;
+  line-height:1.8;
+  font-size:1.2rem;
   opacity:0.9;
 }
 
-label{
-  display:block;
-  margin-top:20px;
-  margin-bottom:10px;
-  font-weight:bold;
+.planet{
+  width:250px;
+  height:250px;
+  border-radius:50%;
+  margin-bottom:30px;
+  box-shadow:0 0 50px rgba(255,255,255,0.4);
+  animation:float 5s ease-in-out infinite;
 }
 
-select,input{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:15px;
-  font-size:16px;
-  outline:none;
+@keyframes float{
+  0%,100%{
+    transform:translateY(0px);
+  }
+  50%{
+    transform:translateY(-20px);
+  }
 }
 
-button{
-  width:100%;
-  margin-top:30px;
-  padding:18px;
-  border:none;
-  border-radius:20px;
-  background:white;
-  color:#ff0844;
-  font-size:20px;
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.3s;
+.earth{
+  background:
+  radial-gradient(circle at 30% 30%, #6ec6ff, #003566);
 }
 
-button:hover{
-  transform:scale(1.05);
+.mars{
+  background:
+  radial-gradient(circle at 30% 30%, #ff9966, #7a1e00);
 }
 
-.loading{
-  display:none;
-  text-align:center;
-  margin-top:25px;
+.jupiter{
+  background:
+  linear-gradient(45deg,#c68642,#7b4b24,#d9a066);
 }
 
-.bar{
-  width:100%;
-  height:20px;
-  background:rgba(255,255,255,0.2);
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:15px;
+.blackhole{
+  background:
+  radial-gradient(circle, #000 20%, purple 40%, cyan 70%, transparent 100%);
+  animation:spin 5s linear infinite;
 }
 
-.fill{
-  width:0%;
-  height:100%;
-  background:white;
-  transition:width 3s linear;
-}
-
-.result{
-  display:none;
-  margin-top:30px;
-  text-align:center;
-  animation:show 0.6s ease;
-}
-
-.percent{
-  font-size:90px;
-  font-weight:bold;
-  margin:15px 0;
-}
-
-.comment{
-  font-size:22px;
-  line-height:1.6;
-}
-
-@keyframes show{
+@keyframes spin{
   from{
-    opacity:0;
-    transform:translateY(20px);
+    transform:rotate(0deg);
   }
   to{
-    opacity:1;
-    transform:translateY(0);
+    transform:rotate(360deg);
   }
 }
 
-.warning{
-  margin-top:20px;
+.scroll{
+  position:absolute;
+  bottom:30px;
   font-size:14px;
-  opacity:0.7;
-  text-align:center;
+  opacity:0.6;
+  animation:blink 2s infinite;
 }
 
-.shake{
-  animation:shake 0.3s infinite;
+@keyframes blink{
+  50%{
+    opacity:0.2;
+  }
 }
 
-@keyframes shake{
-  0%{transform:translateX(0);}
-  25%{transform:translateX(-5px);}
-  50%{transform:translateX(5px);}
-  75%{transform:translateX(-5px);}
-  100%{transform:translateX(0);}
+.glow{
+  color:cyan;
+  text-shadow:0 0 20px cyan;
 }
+
+.ship{
+  position:fixed;
+  width:80px;
+  right:50px;
+  bottom:50px;
+  z-index:10;
+  transition:transform 0.2s linear;
+  filter:drop-shadow(0 0 15px cyan);
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="bg-hearts">
-  <span style="left:10%">💖</span>
-  <span style="left:30%; animation-delay:2s;">💕</span>
-  <span style="left:50%; animation-delay:5s;">💘</span>
-  <span style="left:70%; animation-delay:1s;">❤️</span>
-  <span style="left:90%; animation-delay:4s;">💝</span>
-</div>
+<canvas id="stars"></canvas>
 
-<div class="container">
+<img class="ship" id="ship"
+src="https://cdn-icons-png.flaticon.com/512/3212/3212608.png">
 
-  <h1>💘 고백 성공 확률 계산기</h1>
-  <div class="sub">
-    AI 연애 분석 시스템이 당신의 운명을 판별합니다...
+<section>
+  <h1 class="glow">SPACE EXPLORER</h1>
+
+  <p>
+    스크롤하여 우주를 탐험하세요.<br>
+    미지의 행성과 블랙홀을 지나 은하계 끝까지 여행합니다.
+  </p>
+
+  <div class="scroll">
+    ↓ SCROLL DOWN ↓
   </div>
+</section>
 
-  <label>상대 답장 속도</label>
-  <select id="reply">
-    <option>1분 안에 답장</option>
-    <option>10분 정도</option>
-    <option>1시간</option>
-    <option>하루 뒤</option>
-    <option>안 읽음</option>
-  </select>
+<section>
+  <div class="planet earth"></div>
 
-  <label>읽씹 횟수</label>
-  <input type="number" id="ignore" placeholder="예: 3">
+  <h2>EARTH</h2>
 
-  <label>이모지 사용량</label>
-  <select id="emoji">
-    <option>❤️💕😍 엄청 많음</option>
-    <option>🙂 적당함</option>
-    <option>ㅋㅋ만 씀</option>
-    <option>이모지 없음</option>
-  </select>
+  <p>
+    인류의 시작점.<br>
+    푸른 바다와 생명이 존재하는 기적의 행성.
+  </p>
+</section>
 
-  <button onclick="analyzeLove()">💌 분석 시작</button>
+<section>
+  <div class="planet mars"></div>
 
-  <div class="loading" id="loading">
-    <h2 id="loadingText">AI가 카톡 내용을 분석 중...</h2>
+  <h2>MARS</h2>
 
-    <div class="bar">
-      <div class="fill" id="fill"></div>
-    </div>
-  </div>
+  <p>
+    붉은 먼지 폭풍이 몰아치는 화성.<br>
+    미래 인류의 새로운 거주지가 될지도 모릅니다.
+  </p>
+</section>
 
-  <div class="result" id="result">
-    <div class="percent" id="percent">0%</div>
-    <div class="comment" id="comment"></div>
-  </div>
+<section>
+  <div class="planet jupiter"></div>
 
-  <div class="warning">
-    ※ 본 결과는 재미용이며 당신의 멘탈은 책임지지 않습니다.
-  </div>
+  <h2>JUPITER</h2>
 
-</div>
+  <p>
+    태양계 최대의 행성.<br>
+    거대한 폭풍이 수백 년째 지속되고 있습니다.
+  </p>
+</section>
+
+<section>
+  <div class="planet blackhole"></div>
+
+  <h2>BLACK HOLE</h2>
+
+  <p>
+    빛조차 탈출할 수 없는 중력의 심연.<br>
+    우주의 가장 위험한 존재.
+  </p>
+</section>
+
+<section>
+  <h1 class="glow">END OF THE GALAXY</h1>
+
+  <p>
+    당신은 은하계 끝에 도달했습니다.<br>
+    하지만 우주의 끝은 아직 아무도 모릅니다...
+  </p>
+</section>
 
 <script>
 
-function analyzeLove(){
+// 별 배경
 
-  document.getElementById("result").style.display = "none";
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
 
-  const loading = document.getElementById("loading");
-  const fill = document.getElementById("fill");
-  const loadingText = document.getElementById("loadingText");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  loading.style.display = "block";
+const stars = [];
 
-  fill.style.width = "0%";
-
-  setTimeout(()=>{
-    fill.style.width = "100%";
-  },100);
-
-  const texts = [
-    "AI가 카톡 말투 분석 중...",
-    "읽씹 데이터를 수집 중...",
-    "연애 가능성 계산 중...",
-    "상대의 속마음 해킹 중...",
-    "고백 성공 시뮬레이션 실행 중..."
-  ];
-
-  let idx = 0;
-
-  const interval = setInterval(()=>{
-    idx++;
-    loadingText.innerText = texts[idx % texts.length];
-  },500);
-
-  setTimeout(()=>{
-
-    clearInterval(interval);
-
-    const reply = document.getElementById("reply").selectedIndex;
-    const ignore = parseInt(document.getElementById("ignore").value) || 0;
-    const emoji = document.getElementById("emoji").selectedIndex;
-
-    let score = 50;
-
-    // 답장 속도 점수
-    score += [35,20,5,-15,-40][reply];
-
-    // 읽씹 감점
-    score -= ignore * 7;
-
-    // 이모지 점수
-    score += [25,10,-5,-20][emoji];
-
-    // 랜덤 요소
-    score += Math.floor(Math.random()*21)-10;
-
-    if(score > 100) score = 100;
-    if(score < 0) score = 0;
-
-    let message = "";
-
-    if(score >= 90){
-      message = "💍 거의 결혼 확정입니다.\n청첩장만 남았어요.";
-    }
-    else if(score >= 75){
-      message = "😍 분위기 아주 좋습니다.\n고백 각 보입니다.";
-    }
-    else if(score >= 60){
-      message = "😳 가능성은 있습니다.\n타이밍을 노려보세요.";
-    }
-    else if(score >= 40){
-      message = "🙂 애매합니다.\n일단 친해지는 걸 추천.";
-    }
-    else if(score >= 20){
-      message = "⚠️ 위험합니다.\n친구존 입장 중...";
-    }
-    else{
-      message = "💀 도망치세요.\n이미 상대는 배틀로얄 중.";
-    }
-
-    loading.style.display = "none";
-
-    const result = document.getElementById("result");
-
-    result.style.display = "block";
-
-    document.getElementById("percent").innerText = score + "%";
-    document.getElementById("comment").innerText = message;
-
-    if(score < 30){
-      result.classList.add("shake");
-    }else{
-      result.classList.remove("shake");
-    }
-
-  },3500);
+for(let i=0;i<400;i++){
+  stars.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    radius:Math.random()*2,
+    speed:Math.random()*0.5
+  });
 }
+
+function animateStars(){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle = "white";
+
+  stars.forEach(star=>{
+
+    ctx.beginPath();
+
+    ctx.arc(star.x,star.y,star.radius,0,Math.PI*2);
+
+    ctx.fill();
+
+    star.y += star.speed;
+
+    if(star.y > canvas.height){
+      star.y = 0;
+      star.x = Math.random()*canvas.width;
+    }
+  });
+
+  requestAnimationFrame(animateStars);
+}
+
+animateStars();
+
+
+// 우주선 움직임
+
+const ship = document.getElementById("ship");
+
+window.addEventListener("scroll",()=>{
+
+  const scrollY = window.scrollY;
+
+  ship.style.transform =
+    `translateY(${-scrollY * 0.2}px) rotate(${scrollY * 0.05}deg)`;
+
+});
+
+
+// 화면 크기 변경 대응
+
+window.addEventListener("resize",()=>{
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+});
 
 </script>
 
