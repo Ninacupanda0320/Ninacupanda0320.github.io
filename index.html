@@ -4,9 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>인터랙티브 우주 탐험</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<title>HACKING TERMINAL</title>
 
 <style>
 
@@ -14,13 +12,13 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
+  font-family:Consolas, monospace;
 }
 
 body{
-  overflow-x:hidden;
   background:black;
-  color:white;
-  font-family:'Orbitron',sans-serif;
+  color:#00ff66;
+  overflow:hidden;
 }
 
 canvas{
@@ -30,110 +28,115 @@ canvas{
   z-index:-1;
 }
 
-section{
+.terminal{
+  padding:30px;
   height:100vh;
+  overflow-y:auto;
+  text-shadow:0 0 5px #00ff66;
+}
+
+.line{
+  margin:8px 0;
+  white-space:pre-wrap;
+  animation:flicker 0.05s infinite;
+}
+
+.input-line{
   display:flex;
-  flex-direction:column;
-  justify-content:center;
   align-items:center;
-  text-align:center;
-  padding:20px;
-  position:relative;
 }
 
-h1{
-  font-size:5rem;
-  text-shadow:0 0 20px cyan;
-  margin-bottom:20px;
+.prompt{
+  margin-right:10px;
 }
 
-h2{
-  font-size:4rem;
-  margin-bottom:20px;
+input{
+  background:transparent;
+  border:none;
+  outline:none;
+  color:#00ff66;
+  width:100%;
+  font-size:18px;
+  caret-color:#00ff66;
 }
 
-p{
-  max-width:700px;
-  line-height:1.8;
-  font-size:1.2rem;
-  opacity:0.9;
+.warning{
+  color:red;
+  text-shadow:0 0 10px red;
 }
 
-.planet{
-  width:250px;
-  height:250px;
-  border-radius:50%;
-  margin-bottom:30px;
-  box-shadow:0 0 50px rgba(255,255,255,0.4);
-  animation:float 5s ease-in-out infinite;
+.success{
+  color:#00ffff;
+  text-shadow:0 0 10px cyan;
 }
 
-@keyframes float{
-  0%,100%{
-    transform:translateY(0px);
-  }
-  50%{
-    transform:translateY(-20px);
-  }
+.glitch{
+  animation:glitch 0.2s infinite;
 }
 
-.earth{
-  background:
-  radial-gradient(circle at 30% 30%, #6ec6ff, #003566);
-}
-
-.mars{
-  background:
-  radial-gradient(circle at 30% 30%, #ff9966, #7a1e00);
-}
-
-.jupiter{
-  background:
-  linear-gradient(45deg,#c68642,#7b4b24,#d9a066);
-}
-
-.blackhole{
-  background:
-  radial-gradient(circle, #000 20%, purple 40%, cyan 70%, transparent 100%);
-  animation:spin 5s linear infinite;
-}
-
-@keyframes spin{
-  from{
-    transform:rotate(0deg);
-  }
-  to{
-    transform:rotate(360deg);
-  }
-}
-
-.scroll{
-  position:absolute;
-  bottom:30px;
-  font-size:14px;
-  opacity:0.6;
-  animation:blink 2s infinite;
-}
-
-@keyframes blink{
-  50%{
-    opacity:0.2;
-  }
-}
-
-.glow{
-  color:cyan;
-  text-shadow:0 0 20px cyan;
-}
-
-.ship{
+.scan{
   position:fixed;
-  width:80px;
-  right:50px;
-  bottom:50px;
+  top:0;
+  left:0;
+  width:100%;
+  height:4px;
+  background:rgba(0,255,100,0.4);
+  box-shadow:0 0 20px #00ff66;
+  animation:scan 4s linear infinite;
+}
+
+@keyframes scan{
+  0%{
+    top:-10px;
+  }
+  100%{
+    top:100%;
+  }
+}
+
+@keyframes flicker{
+  0%{opacity:1;}
+  50%{opacity:0.98;}
+  100%{opacity:1;}
+}
+
+@keyframes glitch{
+  0%{
+    transform:translate(0);
+  }
+  25%{
+    transform:translate(-2px,2px);
+  }
+  50%{
+    transform:translate(2px,-2px);
+  }
+  75%{
+    transform:translate(-2px,-2px);
+  }
+  100%{
+    transform:translate(0);
+  }
+}
+
+.topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background:#001100;
+  border-bottom:1px solid #00ff66;
+  padding:10px 20px;
+  display:flex;
+  justify-content:space-between;
   z-index:10;
-  transition:transform 0.2s linear;
-  filter:drop-shadow(0 0 15px cyan);
+}
+
+.status{
+  color:#00ffff;
+}
+
+.red{
+  color:red;
 }
 
 </style>
@@ -141,141 +144,254 @@ p{
 
 <body>
 
-<canvas id="stars"></canvas>
+<canvas id="matrix"></canvas>
 
-<img class="ship" id="ship"
-src="https://cdn-icons-png.flaticon.com/512/3212/3212608.png">
+<div class="scan"></div>
 
-<section>
-  <h1 class="glow">SPACE EXPLORER</h1>
-
-  <p>
-    스크롤하여 우주를 탐험하세요.<br>
-    미지의 행성과 블랙홀을 지나 은하계 끝까지 여행합니다.
-  </p>
-
-  <div class="scroll">
-    ↓ SCROLL DOWN ↓
+<div class="topbar">
+  <div>SYSTEM :: CYBER CORE v4.7</div>
+  <div class="status" id="status">
+    STATUS : CONNECTED
   </div>
-</section>
+</div>
 
-<section>
-  <div class="planet earth"></div>
+<div class="terminal" id="terminal">
 
-  <h2>EARTH</h2>
+  <div class="line success">
+    INITIALIZING SYSTEM...
+  </div>
 
-  <p>
-    인류의 시작점.<br>
-    푸른 바다와 생명이 존재하는 기적의 행성.
-  </p>
-</section>
+  <div class="line">
+    ACCESSING GLOBAL NETWORK...
+  </div>
 
-<section>
-  <div class="planet mars"></div>
+  <div class="line warning">
+    WARNING :: FIREWALL DETECTED
+  </div>
 
-  <h2>MARS</h2>
+  <div class="line">
+    TYPE "help" TO SHOW COMMANDS
+  </div>
 
-  <p>
-    붉은 먼지 폭풍이 몰아치는 화성.<br>
-    미래 인류의 새로운 거주지가 될지도 모릅니다.
-  </p>
-</section>
+  <br>
 
-<section>
-  <div class="planet jupiter"></div>
+  <div class="input-line">
+    <span class="prompt">root@system:~$</span>
+    <input type="text" id="commandInput" autofocus />
+  </div>
 
-  <h2>JUPITER</h2>
-
-  <p>
-    태양계 최대의 행성.<br>
-    거대한 폭풍이 수백 년째 지속되고 있습니다.
-  </p>
-</section>
-
-<section>
-  <div class="planet blackhole"></div>
-
-  <h2>BLACK HOLE</h2>
-
-  <p>
-    빛조차 탈출할 수 없는 중력의 심연.<br>
-    우주의 가장 위험한 존재.
-  </p>
-</section>
-
-<section>
-  <h1 class="glow">END OF THE GALAXY</h1>
-
-  <p>
-    당신은 은하계 끝에 도달했습니다.<br>
-    하지만 우주의 끝은 아직 아무도 모릅니다...
-  </p>
-</section>
+</div>
 
 <script>
 
-// 별 배경
+// MATRIX BACKGROUND
 
-const canvas = document.getElementById("stars");
+const canvas = document.getElementById("matrix");
 const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const stars = [];
+const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@";
+const fontSize = 16;
+const columns = canvas.width / fontSize;
 
-for(let i=0;i<400;i++){
-  stars.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    radius:Math.random()*2,
-    speed:Math.random()*0.5
-  });
+const drops = [];
+
+for(let x=0;x<columns;x++){
+  drops[x]=1;
 }
 
-function animateStars(){
+function drawMatrix(){
 
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(0,0,0,0.08)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  ctx.fillStyle = "white";
+  ctx.fillStyle="#00ff66";
+  ctx.font=fontSize+"px monospace";
 
-  stars.forEach(star=>{
+  for(let i=0;i<drops.length;i++){
 
-    ctx.beginPath();
+    const text = letters.charAt(
+      Math.floor(Math.random()*letters.length)
+    );
 
-    ctx.arc(star.x,star.y,star.radius,0,Math.PI*2);
+    ctx.fillText(text,i*fontSize,drops[i]*fontSize);
 
-    ctx.fill();
-
-    star.y += star.speed;
-
-    if(star.y > canvas.height){
-      star.y = 0;
-      star.x = Math.random()*canvas.width;
+    if(drops[i]*fontSize > canvas.height && Math.random()>0.975){
+      drops[i]=0;
     }
-  });
 
-  requestAnimationFrame(animateStars);
+    drops[i]++;
+  }
 }
 
-animateStars();
+setInterval(drawMatrix,35);
 
 
-// 우주선 움직임
+// TERMINAL
 
-const ship = document.getElementById("ship");
+const input = document.getElementById("commandInput");
+const terminal = document.getElementById("terminal");
 
-window.addEventListener("scroll",()=>{
+const commands = {
 
-  const scrollY = window.scrollY;
+  help: `
+AVAILABLE COMMANDS
 
-  ship.style.transform =
-    `translateY(${-scrollY * 0.2}px) rotate(${scrollY * 0.05}deg)`;
+help        SHOW COMMANDS
+scan        SCAN NETWORK
+hack        START HACKING
+clear       CLEAR TERMINAL
+matrix      ENABLE GLITCH MODE
+status      SYSTEM STATUS
+destroy     SELF DESTRUCT
+`,
 
+  scan: `
+SCANNING NETWORK...
+
+192.168.0.1  :: OPEN
+192.168.0.7  :: SECURED
+52.201.88.1 :: VULNERABLE
+178.22.4.9  :: ACCESS GRANTED
+
+SCAN COMPLETE
+`,
+
+  hack: `
+INITIALIZING CYBER ATTACK...
+
+BYPASSING FIREWALL...
+CRACKING PASSWORD...
+ACCESSING MAINFRAME...
+
+ACCESS GRANTED
+
+WELCOME ADMIN
+`,
+
+  status: `
+SYSTEM STATUS
+
+CPU :: 98%
+NETWORK :: STABLE
+FIREWALL :: DISABLED
+THREAT LEVEL :: CRITICAL
+`,
+
+  matrix: `
+GLITCH MODE ENABLED
+`,
+
+  destroy: `
+SELF DESTRUCT ACTIVATED...
+
+3...
+2...
+1...
+
+JUST KIDDING :)
+`
+};
+
+input.addEventListener("keydown",function(e){
+
+  if(e.key === "Enter"){
+
+    const cmd = input.value.trim();
+
+    addLine(`root@system:~$ ${cmd}`);
+
+    runCommand(cmd);
+
+    input.value = "";
+
+    terminal.scrollTop = terminal.scrollHeight;
+  }
 });
 
+function addLine(text,className="line"){
 
-// 화면 크기 변경 대응
+  const div = document.createElement("div");
+
+  div.className = className;
+
+  div.textContent = text;
+
+  terminal.insertBefore(div,terminal.lastElementChild);
+}
+
+function runCommand(cmd){
+
+  if(cmd === "clear"){
+
+    const lines = document.querySelectorAll(".line");
+
+    lines.forEach(line=>line.remove());
+
+    return;
+  }
+
+  if(cmd === "matrix"){
+
+    document.body.classList.toggle("glitch");
+
+    addLine(commands[cmd],"line success");
+
+    return;
+  }
+
+  if(commands[cmd]){
+
+    const output = commands[cmd]
+      .split("\n");
+
+    output.forEach((line,index)=>{
+
+      setTimeout(()=>{
+
+        addLine(line);
+
+      },index*80);
+
+    });
+
+  }else{
+
+    addLine(
+      `COMMAND NOT FOUND :: ${cmd}`,
+      "line warning"
+    );
+  }
+}
+
+
+// RANDOM SYSTEM MESSAGES
+
+const randomMessages = [
+  "INTRUSION DETECTED",
+  "ACCESSING SATELLITE LINK",
+  "ENCRYPTION BYPASSED",
+  "SIGNAL LOST",
+  "TRACE BLOCKED",
+  "DATA STREAM ACTIVE"
+];
+
+setInterval(()=>{
+
+  const msg = randomMessages[
+    Math.floor(Math.random()*randomMessages.length)
+  ];
+
+  addLine(msg,"line success");
+
+  terminal.scrollTop = terminal.scrollHeight;
+
+},7000);
+
+
+// RESIZE
 
 window.addEventListener("resize",()=>{
 
