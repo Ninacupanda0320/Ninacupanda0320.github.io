@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MBTI 궁합 테스트</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: "Pretendard", sans-serif;
+    }
+
+    body{
+      background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+    }
+
+    .container{
+      width:100%;
+      max-width:500px;
+      background:white;
+      border-radius:25px;
+      padding:35px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.15);
+      text-align:center;
+    }
+
+    h1{
+      margin-bottom:10px;
+      color:#ff4d6d;
+    }
+
+    p{
+      color:#666;
+      margin-bottom:20px;
+    }
+
+    input{
+      width:100%;
+      padding:15px;
+      border:none;
+      border-radius:15px;
+      background:#f3f3f3;
+      margin-bottom:15px;
+      font-size:16px;
+      text-align:center;
+      text-transform:uppercase;
+    }
+
+    button{
+      width:100%;
+      padding:15px;
+      border:none;
+      border-radius:15px;
+      background:#ff4d6d;
+      color:white;
+      font-size:18px;
+      cursor:pointer;
+      transition:0.3s;
+      font-weight:bold;
+    }
+
+    button:hover{
+      background:#ff3355;
+      transform:scale(1.03);
+    }
+
+    .result{
+      margin-top:25px;
+      display:none;
+      animation:fade 0.5s ease;
+    }
+
+    .percent{
+      font-size:60px;
+      font-weight:bold;
+      color:#ff4d6d;
+      margin:20px 0;
+    }
+
+    .message{
+      font-size:18px;
+      line-height:1.5;
+      color:#444;
+    }
+
+    .heart{
+      font-size:50px;
+      animation:beat 1s infinite;
+    }
+
+    @keyframes beat{
+      0%{ transform:scale(1); }
+      50%{ transform:scale(1.2); }
+      100%{ transform:scale(1); }
+    }
+
+    @keyframes fade{
+      from{
+        opacity:0;
+        transform:translateY(10px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>💖 MBTI 궁합 테스트 💖</h1>
+    <p>두 사람의 MBTI를 입력해보세요!</p>
+
+    <input type="text" id="mbti1" placeholder="예: INFP" maxlength="4">
+    <input type="text" id="mbti2" placeholder="예: ENFJ" maxlength="4">
+
+    <button onclick="checkLove()">궁합 보기</button>
+
+    <div class="result" id="result">
+      <div class="heart">❤️</div>
+      <div class="percent" id="percent">90%</div>
+      <div class="message" id="message"></div>
+    </div>
+  </div>
+
+  <script>
+    const messages = [
+      "완벽한 커플이에요 ✨",
+      "서로를 정말 잘 이해해요 💕",
+      "설레는 조합이에요 😍",
+      "티격태격하지만 잘 맞아요 😆",
+      "노력이 필요하지만 가능성 있어요 🙂",
+      "친구로 더 잘 맞을 수도 있어요 👀"
+    ];
+
+    function checkLove() {
+      const mbti1 = document.getElementById("mbti1").value.toUpperCase();
+      const mbti2 = document.getElementById("mbti2").value.toUpperCase();
+
+      if(mbti1.length !== 4 || mbti2.length !== 4){
+        alert("MBTI를 정확히 입력해주세요!");
+        return;
+      }
+
+      // 랜덤 궁합 점수 생성
+      let score = Math.floor(Math.random() * 41) + 60;
+
+      // 같은 MBTI면 보너스
+      if(mbti1 === mbti2){
+        score = 95;
+      }
+
+      let msg = "";
+
+      if(score >= 90){
+        msg = messages[0];
+      } else if(score >= 80){
+        msg = messages[1];
+      } else if(score >= 70){
+        msg = messages[2];
+      } else if(score >= 65){
+        msg = messages[3];
+      } else if(score >= 60){
+        msg = messages[4];
+      } else {
+        msg = messages[5];
+      }
+
+      document.getElementById("result").style.display = "block";
+      document.getElementById("percent").innerText = score + "%";
+      document.getElementById("message").innerText =
+        `${mbti1} ❤️ ${mbti2}\n${msg}`;
+    }
+  </script>
+
+</body>
+</html>
